@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pickflow — Warehouse Operations</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- SIDEBAR: Contains global navigation, branding, and user context -->
+  <aside>
+    <!-- Branding and current warehouse selection -->
+    <a class="brand" href="#">▧ <b>pickflow<span>®</span></b></a>
+    <div class="warehouse">
+      ▣ 
+      <div>
+        <strong>Central warehouse</strong>
+        <small>WH-01 · Mumbai, IN</small>
+      </div>
+      <span>⌄</span>
+    </div>
+    
+    <!-- Primary Navigation Menu -->
+    <label class="navlabel">WORKSPACE</label>
+    <nav>
+      <button data-view="overview">◫ <span>Overview</span></button>
+      <button class="active" data-view="queue">▤ <span>Order queue</span><em id="navCount">8</em></button>
+      <button data-view="locations">⊞ <span>Item locations</span></button>
+      <button data-view="team">♙ <span>Team & assignments</span></button>
+      <button data-view="reports">▥ <span>Productivity</span></button>
+    </nav>
+    
+    <!-- Bottom of sidebar: System status and user profile -->
+    <div class="sidebottom">
+      <div class="live">
+        <i></i> Warehouse operational
+        <small>All systems running smoothly</small>
+      </div>
+      <div class="profile">
+        <span class="avatar">KK</span>
+        <div>
+          <strong>Krish Kumar</strong>
+          <small>Warehouse manager</small>
+        </div>
+        <span>⌄</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT: The active workspace area -->
+  <main>
+    <!-- Top Header: Breadcrumbs and global actions -->
+    <header>
+      <div>Workspace <span>/</span> <b id="crumb">Order queue</b></div>
+      <div class="headerRight">
+        <span><i></i> Live workspace</span>
+        <button id="help" aria-label="Help">?</button>
+        <span class="avatar">KK</span>
+      </div>
+    </header>
+
+    <!-- Page Content Wrapper -->
+    <div class="page">
+      <!-- Page Title & Primary Action (Create Order) -->
+      <div class="heading">
+        <div>
+          <div class="eyebrow">WAREHOUSE OPERATIONS</div>
+          <h1 id="title">Order queue</h1>
+          <p id="subtitle">The right pick. The right place. Right on time.</p>
+        </div>
+        <button class="primary" id="newOrder">＋ Create order</button>
+      </div>
+      
+      <!-- High-level statistics summary (Populated by JS) -->
+      <div class="stats" id="stats"></div>
+
+      <!-- Main Data View: Order Queue -->
+      <div id="queueView">
+        
+        <!-- Top Grid Layout: Order List Table & Detail Panel -->
+        <div class="workspacegrid">
+          <!-- Left Panel: Filterable and sortable data table -->
+          <section class="orders panel">
+            <div class="paneltitle">
+              <div>
+                <h2>Picking queue <span id="totalBadge">08</span></h2>
+                <p>Prioritize, assign, and keep orders moving.</p>
+              </div>
+              <button class="iconbutton" id="export">↓ <span>Export</span></button>
+            </div>
+            
+            <!-- View Tabs -->
+            <div class="tabs">
+              <button class="selected" data-tab="All orders">All orders <span id="allCount"></span></button>
+              <button data-tab="Pending">Pending</button>
+              <button data-tab="In progress">In progress</button>
+              <button data-tab="Completed">Completed</button>
+            </div>
+            
+            <!-- Search & Filters -->
+            <div class="filters">
+              <div class="search">
+                ⌕ <input id="search" placeholder="Search order, customer, or item…" aria-label="Search orders">
+              </div>
+              <select id="priority" aria-label="Filter priority">
+                <option value="">All priorities</option>
+                <option>Urgent</option>
+                <option>High</option>
+                <option>Normal</option>
+              </select>
+              <select id="zone" aria-label="Filter zone">
+                <option value="">All zones</option>
+                <option>Zone A</option>
+                <option>Zone B</option>
+                <option>Zone C</option>
+              </select>
+              <button id="sort" title="Sort by priority">⇅</button>
+            </div>
+            
+            <!-- Orders Table -->
+            <div class="tablewrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ORDER / CUSTOMER</th>
+                    <th>PRIORITY</th>
+                    <th>ITEMS</th>
+                    <th>ASSIGNED TO</th>
+                    <th>STATUS</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+            <div class="tablefoot">
+              <span id="showing"></span>
+              <span>Sorted by priority <b>↓</b></span>
+            </div>
+          </section>
+          
+          <!-- Right Panel: Dynamic details for the selected order -->
+          <section class="pick panel" id="detail"></section>
+        </div>
+        
+        <!-- Bottom Grid Layout: Analytics and Informational Banners -->
+        <div class="bottomgrid">
+          <!-- Activity/Throughput chart container -->
+          <section class="panel throughput">
+            <div class="paneltitle">
+              <div>
+                <h2>Picking activity</h2>
+                <p>A little momentum goes a long way.</p>
+              </div>
+              <span class="muted">Current session</span>
+            </div>
+            <div id="activity"></div>
+          </section>
+          
+          <!-- Static promotional/informational banner -->
+          <section class="routebanner">
+            <div class="routeicon">⌁</div>
+            <div>
+              <span class="eyebrow">SMARTER PATHS, FASTER PICKS</span>
+              <h3>Less walking. More picking.</h3>
+              <p>Pick lists are sorted by aisle and shelf<br>to keep every trip efficient.</p>
+            </div>
+            <div class="pathart">
+              A ━━━ ◉<br>
+              ┊  B  ┃<br>
+              ◎ ━━━ C
+            </div>
+          </section>
+        </div>
+      </div>
+      
+      <!-- Container for dynamically swapped views (e.g., Overview, Locations) -->
+      <section id="otherView" class="panel" hidden></section>
+      
+      <footer>
+        <span><i></i> Browser demo · Changes saved on this device</span>
+        <span>Built for a smoother warehouse day. ↗</span>
+      </footer>
+    </div>
+  </main>
+
+  <!-- MODALS & OVERLAYS -->
+  <!-- Dialog for creating a new order -->
+  <dialog id="modal">
+    <form id="orderForm">
+      <div class="modalhead">
+        <h2>Create order</h2>
+        <button type="button" id="closeModal">×</button>
+      </div>
+      <label>Customer
+        <input name="customer" required placeholder="Company or customer name">
+      </label>
+      <label>Priority
+        <select name="priority">
+          <option>Normal</option>
+          <option>High</option>
+          <option>Urgent</option>
+        </select>
+      </label>
+      <label>Item
+        <input name="item" required placeholder="Item description">
+      </label>
+      <div class="formgrid">
+        <label>Quantity
+          <input name="qty" type="number" min="1" max="999" value="1" required>
+        </label>
+        <label>Location
+          <select name="location">
+            <option>A-01-02</option>
+            <option>A-03-01</option>
+            <option>B-02-03</option>
+            <option>C-01-04</option>
+          </select>
+        </label>
+      </div>
+      <button class="primary">Create order</button>
+    </form>
+  </dialog>
+  
+  <!-- Container for non-blocking toast notifications -->
+  <div id="toast" role="status"></div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
