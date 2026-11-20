@@ -1,7 +1,6 @@
 PICKFLOW — WAREHOUSE PICKING DASHBOARD
 
-Extract this ZIP and open index.html in your browser.
-Keep index.html, style.css, and app.js together. No installation is required.
+
 
 Includes warehouse switching, member management, location management, grouped items, orders, picking progress, and CSV export.
 
